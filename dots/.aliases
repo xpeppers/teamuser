@@ -1,0 +1,9 @@
+#!/bin/bash
+
+alias v="vagrant"
+alias gdiff="git diff --color | diff-so-fancy | less"
+alias git=hub
+alias g=git
+alias d="docker"
+alias doco=docker-compose
+alias docker-clean="docker ps -aqf status=exited|xargs docker rm && docker images -qf dangling=true|xargs docker rmi"

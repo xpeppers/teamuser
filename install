@@ -1,0 +1,74 @@
+#!/bin/sh
+set -e
+
+function print_waiting_title {
+  echo "------------------------------"
+  echo $1
+  echo "------------------------------"
+  sleep 3
+}
+
+NEWUSER="orione"
+NEWPASSWORD=$1
+NEWHOME="/Users/$NEWUSER"
+
+print_waiting_title "Creating $NEWUSER User"
+
+sudo dscl . -create $NEWHOME
+sudo dscl . -create $NEWHOME UserShell /bin/bash
+sudo dscl . -create $NEWHOME RealName "$NEWUSER"
+sudo dscl . -create $NEWHOME UniqueID "999"
+sudo dscl . -create $NEWHOME PrimaryGroupID 99
+sudo dscl . -create $NEWHOME NFSHomeDirectory $NEWHOME
+sudo dscl . -passwd $NEWHOME $NEWPASSWORD
+
+sudo dscl . -append /Groups/admin GroupMembership $NEWUSER
+sudo dscl . -append /Groups/_appserveradm GroupMembership "$NEWUSER"
+sudo dscl . -append /Groups/_appserverusr GroupMembership "$NEWUSER"
+
+sudo cp -R /System/Library/User\ Template/English.lproj $NEWHOME
+sudo chown -R ${NEWUSER}:staff $NEWHOME
+
+### !! are interactive!! :(
+sudo sysadminctl -secureTokenOn $NEWUSER -password $NEWPASSWORD interactive
+sudo fdesetup add -usertoadd "$NEWUSER"
+
+
+print_waiting_title "Downloading Configurations $NEWUSER User"
+
+DOTSPATH="$NEWHOME/dotfiles"
+
+echo ".... installing brew"
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+brew update && brew upgrade && brew cleanup
+echo ".... installing git"
+brew install git
+
+if [ -e $DOTSPATH/.git ]; then
+  cd $DOTSPATH && git pull
+else
+  git clone https://github.com/xpeppers/teamuser.git $DOTSPATH
+fi
+
+print_waiting_title "linking dot-files"
+for file in $(echo $DOTSPATH/dots/.*)
+do
+  if [ -f "$file" ]; then
+    filename=$(basename "$file")
+
+    echo "----> linking $filename"
+    ln -s $NEWHOME/dotfiles/$file $NEWHOME/$filename
+  fi
+done
+
+print_waiting_title "installing scripts"
+chmod +x scripts/*
+for file in $(echo $DOTSPATH/scripts/*)
+do
+  echo "--> executing $file"
+
+  $DOTSPATH/$file $NEWUSER
+done
+
+# Adjust permissions for personal user
+sudo chmod 600 ~

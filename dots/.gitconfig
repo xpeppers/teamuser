@@ -1,0 +1,11 @@
+[user]
+  name = XPeppers
+  email = orione-team@xpeppers.com
+[push]
+  default = simple
+  followTags = true
+[color "diff-highlight"]
+  oldNormal = red
+  oldHighlight = red bold 52
+  newNormal = green
+  newHighlight = green bold 22

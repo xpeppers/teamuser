@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo ".... installing caskroom/cask/brew-cask"
+brew install caskroom/cask/brew-cask
+brew tap caskroom/versions
+
+echo ".... installing sizeup"
+brew cask install sizeup
+echo ".... installing jumpcut"
+brew cask install jumpcut
+echo ".... installing google-chrome"
+brew cask install google-chrome
+echo ".... installing slack"
+brew cask install slack
+echo ".... installing virtualbox"
+brew cask install virtualbox
+echo ".... installing virtualbox-extension-pack"
+brew cask install virtualbox-extension-pack
+echo ".... installing vagrant"
+brew cask install vagrant
+echo ".... installing docker"
+brew cask install docker
+echo ".... installing google-backup-and-sync"
+brew cask install google-backup-and-sync
+echo ".... installing zoom.us remote collaboration"
+brew cask install zoomus
+
+echo ".... brew cleanup"
+brew cleanup

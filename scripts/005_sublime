@@ -1,0 +1,32 @@
+#!/bin/bash
+
+USERHOME=/Users/$1
+
+if ! type "subl" > /dev/null; then
+  brew cask install sublime-text3
+fi
+
+SUBLIME_SETTINGS_PATH=$USERHOME/Library/Application\ Support/Sublime\ Text\ 3/Packages/User
+DOTFILE_SETTINGS_PATH=$USERHOME/dotfiles/.config/sublime
+
+if [ -f "$SUBLIME_SETTINGS_PATH/Preferences.sublime-settings.orig" ]; then
+  rm "$SUBLIME_SETTINGS_PATH/Preferences.sublime-settings"
+else
+  mv "$SUBLIME_SETTINGS_PATH/Preferences.sublime-settings" "$SUBLIME_SETTINGS_PATH/Preferences.sublime-settings.orig"
+fi
+
+if [ -f "$SUBLIME_SETTINGS_PATH/Package\ Control.sublime-settings.orig" ]; then
+  rm "$SUBLIME_SETTINGS_PATH/Package\ Control.sublime-settings"
+else
+  mv "$SUBLIME_SETTINGS_PATH/Package\ Control.sublime-settings" "$SUBLIME_SETTINGS_PATH/Package\ Control.sublime-settings.orig"
+fi
+
+if [ -f "$SUBLIME_SETTINGS_PATH/Default\ (OSX).sublime-keymap.orig" ]; then
+  rm "$SUBLIME_SETTINGS_PATH/Default\ (OSX).sublime-keymap"
+else
+  mv "$SUBLIME_SETTINGS_PATH/Default\ (OSX).sublime-keymap" "$SUBLIME_SETTINGS_PATH/Default\ (OSX).sublime-keymap.orig"
+fi
+
+ln -s "$DOTFILE_SETTINGS_PATH/Default\ (OSX).sublime-keymap" "$SUBLIME_SETTINGS_PATH/Default\ (OSX).sublime-keymap"
+ln -s "$DOTFILE_SETTINGS_PATH/Preferences.sublime-settings" "$SUBLIME_SETTINGS_PATH/Preferences.sublime-settings"
+ln -s "$DOTFILE_SETTINGS_PATH/Package\ Control.sublime-settings" "$SUBLIME_SETTINGS_PATH/Package\ Control.sublime-settings"
